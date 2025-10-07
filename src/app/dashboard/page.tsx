@@ -50,6 +50,7 @@ export default function Dashboard() {
       }
       
       const data = await response.json();
+      console.log(data);
       setVaultItems(data.items || []);
     } catch (error) {
       console.error('Error fetching vault items:', error);
@@ -65,6 +66,7 @@ export default function Dashboard() {
     item.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.url?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  console.log(filteredItems,"rv");
 
   const handleAddItem = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -154,8 +156,9 @@ export default function Dashboard() {
       }
 
       // Decrypt the password
+      console.log(encryptedPassword);
       const decryptedPassword = encryptionService.decrypt(encryptedPassword, currentMasterPassword);
-      
+      console.log(decryptedPassword);
       // Store in cache
       setDecryptedPasswords(prev => ({
         ...prev,

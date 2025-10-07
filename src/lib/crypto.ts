@@ -16,12 +16,16 @@ export class EncryptionService {
   }
 
   decrypt(ciphertext: string, masterPassword: string): string {
+    console.log(ciphertext,masterPassword);
     const [salt, encrypted] = ciphertext.split(':');
+    console.log(salt,encrypted);
     if (!salt || !encrypted) {
       throw new Error('Invalid ciphertext format');
     }
     const key = this.deriveKey(masterPassword, salt);
+    console.log(key,"key");
     const decrypted = CryptoJS.AES.decrypt(encrypted, key);
+    console.log("de",decrypted);
     return decrypted.toString(CryptoJS.enc.Utf8);
   }
 
