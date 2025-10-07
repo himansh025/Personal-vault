@@ -33,7 +33,7 @@ export async function GET(_request: NextRequest) {
       id: item._id.toString(),
       title: item.title,
       username: item.username,
-      password: '••••••••', // Don't send encrypted password to client
+      password: item.password , // Don't send encrypted password to client
       url: item.url,
       notes: item.notes,
       createdAt: item.createdAt,
