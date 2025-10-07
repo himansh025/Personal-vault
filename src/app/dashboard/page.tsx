@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { encryptionService } from '@/lib/crypto';
 import { Plus, Search, LogOut, Eye, EyeOff, Copy, Trash2, Loader2, Key } from 'lucide-react';
+import CopyButton from '../components/CopyButton';
 
 interface VaultItem {
   id: string;
@@ -33,7 +34,6 @@ export default function Dashboard() {
     notes: ''
   });
 
-  // Fetch vault items on component mount
   useEffect(() => {
     if (user) {
       fetchVaultItems();
@@ -48,7 +48,7 @@ export default function Dashboard() {
       if (!response.ok) {
         throw new Error('Failed to fetch vault items');
       }
-      
+    
       const data = await response.json();
       console.log(data);
       setVaultItems(data.items || []);
@@ -60,7 +60,6 @@ export default function Dashboard() {
     }
   };
 
-  // Filter items based on search
   const filteredItems = vaultItems.filter(item =>
     item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -141,34 +140,26 @@ export default function Dashboard() {
     try {
       let currentMasterPassword = masterPassword;
       
-      // If no master password is stored, prompt the user
       if (!currentMasterPassword) {
         const userInput = prompt('Enter your master password to view this password:');
         if (!userInput) return; // User cancelled
         currentMasterPassword = userInput;
         setMasterPassword(userInput);
       }
-
-      // Check if we already decrypted this password
       if (decryptedPasswords[itemId]) {
         setShowPasswordId(showPasswordId === itemId ? null : itemId);
         return;
       }
 
-      // Decrypt the password
       console.log(encryptedPassword);
       const decryptedPassword = encryptionService.decrypt(encryptedPassword, currentMasterPassword);
       console.log(decryptedPassword);
-      // Store in cache
       setDecryptedPasswords(prev => ({
         ...prev,
         [itemId]: decryptedPassword
       }));
 
-      // Show the password
-      setShowPasswordId(itemId);
-      
-      // Auto-hide after 30 seconds
+      setShowPasswordId(itemId);      
       setTimeout(() => {
         setShowPasswordId(null);
       }, 30000);
@@ -177,50 +168,6 @@ export default function Dashboard() {
       console.error('Decryption error:', error);
       alert('Failed to decrypt password. Please check your master password.');
       setMasterPassword(''); // Clear invalid master password
-    }
-  };
-
-  const handleCopyPassword = async (itemId: string, encryptedPassword: string) => {
-    try {
-      let currentMasterPassword = masterPassword;
-      
-      // If no master password is stored, prompt the user
-      if (!currentMasterPassword) {
-        const userInput = prompt('Enter your master password to copy this password:');
-        if (!userInput) return; // User cancelled
-        currentMasterPassword = userInput;
-        setMasterPassword(userInput);
-      }
-
-      let decryptedPassword = decryptedPasswords[itemId];
-      
-      // If not in cache, decrypt it
-      if (!decryptedPassword) {
-        decryptedPassword = encryptionService.decrypt(encryptedPassword, currentMasterPassword);
-        // Store in cache
-        setDecryptedPasswords(prev => ({
-          ...prev,
-          [itemId]: decryptedPassword
-        }));
-      }
-
-      // Copy to clipboard
-      await navigator.clipboard.writeText(decryptedPassword);
-      alert('Password copied to clipboard!');
-      
-    } catch (error) {
-      console.error('Decryption error:', error);
-      alert('Failed to decrypt password. Please check your master password.');
-      setMasterPassword(''); // Clear invalid master password
-    }
-  };
-
-  const copyToClipboard = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      alert('Copied to clipboard!');
-    } catch (err) {
-      console.error('Failed to copy text: ', err);
     }
   };
 
@@ -439,42 +386,30 @@ export default function Dashboard() {
                           </a>
                         )}
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <span className="text-gray-500">Username: </span>
-                          <span className="text-gray-900">{item.username}</span>
-                          <button
-                            onClick={() => copyToClipboard(item.username)}
-                            className="ml-2 text-blue-600 hover:text-blue-700"
-                            title="Copy username"
-                          >
-                            <Copy size={14} />
-                          </button>
-                        </div>
-                        <div>
-                          <span className="text-gray-500">Password: </span>
-                          <span className="text-gray-900 font-mono">
-                            {showPasswordId === item.id ? 
-                              (decryptedPasswords[item.id] || 'Decrypting...') 
-                              : '••••••••'
-                            }
-                          </span>
-                          <button
-                            onClick={() => handleViewPassword(item.id, item.password)}
-                            className="ml-2 text-blue-600 hover:text-blue-700"
-                            title={showPasswordId === item.id ? "Hide password" : "View password"}
-                          >
-                            {showPasswordId === item.id ? <EyeOff size={14} /> : <Eye size={14} />}
-                          </button>
-                          <button
-                            onClick={() => handleCopyPassword(item.id, item.password)}
-                            className="ml-2 text-blue-600 hover:text-blue-700"
-                            title="Copy password"
-                          >
-                            <Copy size={14} />
-                          </button>
-                        </div>
-                      </div>
+                 <div>
+  <span className="text-gray-500">Password: </span>
+  <span className="text-gray-900 font-mono">
+    {showPasswordId === item.id ? 
+      (decryptedPasswords[item.id] || 'Decrypting...') 
+      : '••••••••'
+    }
+  </span>
+  <button
+    onClick={() => handleViewPassword(item.id, item.password)}
+    className="ml-2 text-blue-600 hover:text-blue-700"
+    title={showPasswordId === item.id ? "Hide password" : "View password"}
+  >
+    {showPasswordId === item.id ? <EyeOff size={14} /> : <Eye size={14} />}
+  </button>
+  
+  {/* Fixed CopyButton - pass decrypted password, not encrypted */}
+  {showPasswordId === item.id && decryptedPasswords[item.id] && (
+    <CopyButton 
+      text={decryptedPasswords[item.id]} 
+      timeout={15000} // 15 seconds auto-clear
+    />
+  )}
+</div>
                       {item.notes && (
                         <div className="mt-2">
                           <span className="text-gray-500">Notes: </span>
