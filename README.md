@@ -1,36 +1,101 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🔒 SecurePass - Privacy-First Password Manager
+## 🚀 Live Demo
 
-## Getting Started
+[https://personal-vault-beige.vercel.app/](https://personal-vault-beige.vercel.app/)
 
-First, run the development server:
+A **secure, open-source password manager** with **client-side encryption**.  
+Your data is encrypted **on your device** before it ever reaches our servers.
+
+---
+
+![Password Manager](https://img.shields.io/badge/Password%2520Manager-Secure%2520%2526%2520Private-brightgreen)
+![Next.js](https://img.shields.io/badge/Next.js-14.0-black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
+![MongoDB](https://img.shields.io/badge/MongoDB-7.5-green)
+
+---
+
+## 🚀 Features
+
+### 🔐 Security First
+- **Client-Side Encryption:** All data encrypted locally before syncing  
+- **Zero-Knowledge Architecture:** We never see your passwords  
+- **AES-256 Encryption:** Military-grade encryption standards  
+- **Master Password Protection:** Only you hold the decryption keys  
+
+### ⚡ Core Functionality
+- **Secure Password Generator:** Create strong, unique passwords  
+- **Encrypted Vault:** Store passwords, notes, and credentials safely  
+- **Auto-Clear Clipboard:** Passwords automatically clear after 15 seconds  
+- **Cross-Platform Access:** Access your vault from any device  
+
+### 🛠️ Technical Features
+- **Modern Stack:** Next.js 14, TypeScript, Tailwind CSS  
+- **Real-time Search:** Instantly find your passwords  
+- **Responsive Design:** Works perfectly on desktop and mobile  
+- **Secure Authentication:** JWT-based session management  
+
+---
+
+## 📦 Quick Start
+
+### 🧩 Prerequisites
+- Node.js 18+  
+- MongoDB (local or Atlas)  
+- Modern web browser  
+
+### ⚙️ Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+git clone https://github.com/yourusername/securepass.git
+cd securepass
+npm install
+# 🔒 SecurePass - Privacy-First Password Manager
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+A **secure, open-source password manager** with **client-side encryption**.  
+Your data is encrypted **on your device** before it ever reaches our servers.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+![Password Manager](https://img.shields.io/badge/Password%2520Manager-Secure%2520%2526%2520Private-brightgreen)
+![Next.js](https://img.shields.io/badge/Next.js-14.0-black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
+![MongoDB](https://img.shields.io/badge/MongoDB-7.5-green)
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🚀 Features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 🔐 Security First
+- **Client-Side Encryption:** All data encrypted locally before syncing  
+- **Zero-Knowledge Architecture:** We never see your passwords  
+- **AES-256 Encryption:** Military-grade encryption standards  
+- **Master Password Protection:** Only you hold the decryption keys  
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### ⚡ Core Functionality
+- **Secure Password Generator:** Create strong, unique passwords  
+- **Encrypted Vault:** Store passwords, notes, and credentials safely  
+- **Auto-Clear Clipboard:** Passwords automatically clear after 15 seconds  
+- **Cross-Platform Access:** Access your vault from any device  
 
-## Deploy on Vercel
+### 🛠️ Technical Features
+- **Modern Stack:** Next.js 14, TypeScript, Tailwind CSS  
+- **Real-time Search:** Instantly find your passwords  
+- **Responsive Design:** Works perfectly on desktop and mobile  
+- **Secure Authentication:** JWT-based session management  
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📦 Quick Start
+
+### 🧩 Prerequisites
+- Node.js 18+  
+- MongoDB (local or Atlas)  
+- Modern web browser  
+
+### ⚙️ Installation
+
+```bash
+git clone https://github.com/yourusername/securepass.git
+cd securepass
+npm install
