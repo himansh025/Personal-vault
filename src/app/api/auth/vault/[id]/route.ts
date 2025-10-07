@@ -4,10 +4,6 @@ import VaultItem from '@/models/VaultItem';
 import { authService } from '@/lib/auth';
 import { encryptionService } from '@/lib/crypto';
 
-interface Params {
-  id: string;
-}
-
 interface UpdateData {
   title: string;
   username: string;
@@ -20,9 +16,10 @@ interface UpdateData {
 // PUT - Update vault item
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Params }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await props.params;
     const user = await authService.getCurrentUser();
     
     if (!user) {
@@ -99,10 +96,11 @@ export async function PUT(
 
 // DELETE - Delete vault item
 export async function DELETE(
-  _request: NextRequest,  // Prefixed with _ since it's not used
-  { params }: { params: Params }
+  _request: NextRequest,
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await props.params;
     const user = await authService.getCurrentUser();
     
     if (!user) {
