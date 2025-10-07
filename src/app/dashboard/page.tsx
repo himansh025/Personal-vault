@@ -288,7 +288,7 @@ export default function Dashboard() {
 
         {/* Add Item Form */}
         {showAddForm && (
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6">
+          <div className="bg-white p-6 text-blue-950 rounded-lg shadow-sm border border-gray-200 mb-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Add New Password</h3>
             <form onSubmit={handleAddItem} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

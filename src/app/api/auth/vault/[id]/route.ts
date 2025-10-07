@@ -4,10 +4,23 @@ import VaultItem from '@/models/VaultItem';
 import { authService } from '@/lib/auth';
 import { encryptionService } from '@/lib/crypto';
 
+interface Params {
+  id: string;
+}
+
+interface UpdateData {
+  title: string;
+  username: string;
+  url?: string;
+  notes?: string;
+  password?: string;
+  updatedAt: Date;
+}
+
 // PUT - Update vault item
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Params }
 ) {
   try {
     const user = await authService.getCurrentUser();
@@ -33,8 +46,8 @@ export async function PUT(
       );
     }
 
-    // Prepare update data
-    const updateData: any = {
+    // Prepare update data with proper typing
+    const updateData: UpdateData = {
       title,
       username,
       url,
@@ -52,6 +65,13 @@ export async function PUT(
       updateData,
       { new: true }
     );
+
+    if (!updatedItem) {
+      return NextResponse.json(
+        { error: 'Failed to update item' },
+        { status: 500 }
+      );
+    }
 
     const responseItem = {
       id: updatedItem._id.toString(),
@@ -79,8 +99,8 @@ export async function PUT(
 
 // DELETE - Delete vault item
 export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  _request: NextRequest,  // Prefixed with _ since it's not used
+  { params }: { params: Params }
 ) {
   try {
     const user = await authService.getCurrentUser();

@@ -4,58 +4,115 @@ import VaultItem from '@/models/VaultItem';
 import { authService } from '@/lib/auth';
 import { encryptionService } from '@/lib/crypto';
 
-interface Params {
-  id: string;
+interface VaultItemData {
+  title: string;
+  username: string;
+  password: string;
+  url?: string;
+  notes?: string;
+  masterPassword: string;
 }
 
-// PUT - Update a vault item
-export async function PUT(request: NextRequest, context: { params: Params }) {
-  const { params } = context;
-  const itemId = params.id;
+// GET - Fetch all vault items for the current user
+export async function GET(_request: NextRequest) {
+  try {
+    const user = await authService.getCurrentUser();
+    
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Not authenticated' },
+        { status: 401 }
+      );
+    }
 
-  const user = await authService.getCurrentUser();
-  if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    await connectToDatabase();
 
-  const { title, username, password, url, notes, masterPassword } = await request.json();
-  await connectToDatabase();
+    const vaultItems = await VaultItem.find({ userId: user.userId }).sort({ createdAt: -1 });
 
-  const existingItem = await VaultItem.findOne({ _id: itemId, userId: user.userId });
-  if (!existingItem) return NextResponse.json({ error: 'Item not found' }, { status: 404 });
+    const items = vaultItems.map((item) => ({
+      id: item._id.toString(),
+      title: item.title,
+      username: item.username,
+      password: '••••••••', // Don't send encrypted password to client
+      url: item.url,
+      notes: item.notes,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt
+    }));
 
-  const updateData: any = { title, username, url, notes, updatedAt: new Date() };
-  if (password && masterPassword) {
-    updateData.password = encryptionService.encrypt(password, masterPassword);
+    return NextResponse.json({ items });
+
+  } catch (error) {
+    console.error('Get vault items error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
-
-  const updatedItem = await VaultItem.findByIdAndUpdate(itemId, updateData, { new: true });
-
-  return NextResponse.json({
-    item: {
-      id: updatedItem._id.toString(),
-      title: updatedItem.title,
-      username: updatedItem.username,
-      password: '••••••••',
-      url: updatedItem.url,
-      notes: updatedItem.notes,
-      createdAt: updatedItem.createdAt,
-      updatedAt: updatedItem.updatedAt
-    },
-    message: 'Password updated successfully'
-  });
 }
 
-// DELETE - Delete a vault item
-export async function DELETE(request: NextRequest, context: { params: Params }) {
-  const { params } = context;
-  const itemId = params.id;
+// POST - Create a new vault item
+export async function POST(request: NextRequest) {
+  try {
+    const user = await authService.getCurrentUser();
+    
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Not authenticated' },
+        { status: 401 }
+      );
+    }
 
-  const user = await authService.getCurrentUser();
-  if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    const body: VaultItemData = await request.json();
+    const { title, username, password, url, notes, masterPassword } = body;
 
-  await connectToDatabase();
-  const existingItem = await VaultItem.findOne({ _id: itemId, userId: user.userId });
-  if (!existingItem) return NextResponse.json({ error: 'Item not found' }, { status: 404 });
+    if (!title || !username || !password || !masterPassword) {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
 
-  await VaultItem.findByIdAndDelete(itemId);
-  return NextResponse.json({ message: 'Password deleted successfully' });
+    await connectToDatabase();
+
+    // Encrypt the password before storing
+    const encryptedPassword = encryptionService.encrypt(password, masterPassword);
+
+    const newItem = await VaultItem.create({
+      userId: user.userId,
+      title,
+      username,
+      password: encryptedPassword,
+      url: url || '',
+      notes: notes || '',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+
+    const responseItem = {
+      id: newItem._id.toString(),
+      title: newItem.title,
+      username: newItem.username,
+      password: '••••••••',
+      url: newItem.url,
+      notes: newItem.notes,
+      createdAt: newItem.createdAt,
+      updatedAt: newItem.updatedAt
+    };
+
+    return NextResponse.json(
+      { 
+        item: responseItem,
+        message: 'Password saved successfully' 
+      },
+      { status: 201 }
+    );
+
+  } catch (error) {
+    console.error('Create vault item error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
 }
